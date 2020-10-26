@@ -222,29 +222,32 @@ function changstatus(path) {
 }
 
 function notification(body) {
-  var REF = db.ref('token')
+  var REF = db.ref('token');
   REF.once("value",function(snapshot) {
+    console.log('Send '+body);
     snapshot.forEach(function(token){
       if(token.key!=null){
         const options = {
           priority: "normal",
           timeToLive: 60 * 10
-      }
+        }
         const payload = {
           notification: {title: "Parking Alert",body: body,}
         }
-        try{
-         admin.messaging().sendToDevice(token.key, payload,options);
-         console.log('Send '+body);
-        }catch(err){
-         console.log(err);
-        }
+        var ref = db.ref('check/non');
+        ref.once("value",function(snapshot) {
+          if(snapshot.val()=='on'){
+            try{
+              admin.messaging().sendToDevice(token.key, payload,options);
+            }catch(err){
+              console.log(err);
+            }
+          }
+        });
       }
     });
   });
 }
-// notification('test 3');
-
 var statusEmp = {};
 var REF = db.ref('status_and_name')
   REF.once("value",function(snapshot) {
