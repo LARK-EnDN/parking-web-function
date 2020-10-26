@@ -235,7 +235,7 @@ function notification(body) {
         }
         try{
          admin.messaging().sendToDevice(token.key, payload,options);
-         console.log('send');
+         console.log('Send '+body);
         }catch(err){
          console.log(err);
         }
@@ -245,7 +245,7 @@ function notification(body) {
 }
 // notification('test 3');
 
-
+var statusEmp = {};
 var REF = db.ref('status_and_name')
   REF.once("value",function(snapshot) {
     snapshot.forEach(function(b){
@@ -256,18 +256,28 @@ var REF = db.ref('status_and_name')
           var bb = b.key;bb = bb.split("_");
           var ff = f.key;ff = ff.split("_");
           REF.on("value",function(b1status) {
-            console.log(b1status.val());
+            var emp = 0;
             if(b1status.val()==2){
               const ref = db.ref('Alert_text_type/sensor/app')
               ref.once("value",function(text) {
-                // notification('อาคาร '+b.key+' ชั้น '+f.key+' '+text.val());
-                console.log('อาคาร '+bb[1]+' ชั้น '+ff[1]+' '+text.val());
+                notification('อาคาร '+b.key+' ชั้น '+f.key+' '+text.val());
+                // console.log('อาคาร '+bb[1]+' ชั้น '+ff[1]+' '+text.val());
               });
             }else if(b1status.val()==1){
               const ref = db.ref('status_and_name/'+b.key+'/'+f.key+'/sensor')
-              ref.once("value",function(text) {
+              ref.on("value",function(snap) {
+                emp = 0;
+                snap.forEach(function(k){
+                  if(k.val().status==0){
+                    emp++;
+                  }
+                  statusEmp[bb[1]+'_'+ff[1]] = emp;
+                });
+                if(statusEmp[bb[1]+'_'+ff[1]]==0){
+                  notification('อาคาร '+bb[1]+' ชั้น '+ff[1]+' ไม่มีช่องว่าง');
+                  // console.log('อาคาร '+bb[1]+' ชั้น '+ff[1]+' ไม่มีช่องว่าง');
+                }
               });
-
             }
           });
         });
