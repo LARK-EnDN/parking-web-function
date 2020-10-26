@@ -1,0 +1,473 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System management</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    
+    <script src="https://www.gstatic.com/firebasejs/7.6.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.2/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.2/firebase-database.js"></script>
+    <link href="/templates/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        var Config = {
+            apiKey: "AIzaSyCZ4ar-3tDLt_SVnOraKlOwxOnfxAfhLtQ",
+            authDomain: "testeverything-63c3c.firebaseapp.com",
+            databaseURL: "https://testeverything-63c3c.firebaseio.com",
+            projectId: "testeverything-63c3c",
+            storageBucket: "testeverything-63c3c.appspot.com",
+            messagingSenderId: "1019130368477",
+            appId: "1:1019130368477:web:c9f0d0d6c93c39335c2634",
+            measurementId: "G-JSP9LJX1QF"
+        };
+        firebase.initializeApp(Config);
+        firebase.analytics();
+
+    </script>
+    <style>
+        body {
+          margin: 0;
+          font-family: 'TH SarabunPSK';
+          background-color: #F1F1F1;
+          font-size: 30px;
+        }
+        
+        ul {
+          list-style-type: none;
+          margin: 0;
+          padding: 0;
+          width: 15%;
+          background-color: #2E5597;
+          position: fixed;
+          height: 100%;
+          overflow: auto;
+        }
+        
+        li a {
+          display: block;
+          color: rgb(163, 163, 163);
+          padding: 12px 20px;
+          text-decoration: none;
+          font-size: 30px;
+        }
+
+        li a.active {
+          background-color: #243F6D;
+          color: white;
+        }
+        
+        li a:hover:not(.active) {
+          background-color: rgb(116, 116, 116);
+          color: rgb(211, 211, 211);
+        }
+
+        .center {
+            display: block;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        h1{
+            font-size:60px;
+            margin-left:20px;
+        }
+
+        h2,h2.card-title{
+            font-size:30px;
+            margin-left:20px;
+        }
+        div.card{
+          margin: 20px 0 20px 0;
+        }
+        input.form-control{
+          margin-left:10px;
+          font-size: 20px;
+        }
+        form.form-inline{
+          margin: 10px 0 10px 0;
+        }
+        input.type{
+          margin: 10px;
+        }
+
+        </style>
+</head>
+<body>
+    <ul>
+        <li><a class="active" style="font-size: 35px;color: rgb(212, 225, 255);">Parking System</a></li>
+        <li><img class="center" src="icon.png"></li>
+        <li><a href="javascript:next('https://testeverything-63c3c-status.firebaseapp.com/')">Usage status</a></li>
+        <li><a href="javascript:next('https://testeverything-63c3c-alert.firebaseapp.com/')">Manage notification</a></li>
+        <li><a href="javascript:next('https://testeverything-63c3c-report.firebaseapp.com/')">Report</a></li>
+        <li><a class="active">System management</a></li>
+        <li><a href="javascript:next('https://testeverything-63c3c-account-1.firebaseapp.com/')">Manage account</a></li>
+        <li style="padding: 12px 20px;"><button type="button" class="btn btn-dark" style="font-size: 25px;" onclick="logout()">Log Out</button></li>
+      </ul>
+      <div style="margin-left:15%;padding:1px 16px;">
+
+        <!-- <div class='modal fade' id='myModal'><div class='modal-dialog'>
+          <div class='modal-content'><div class='modal-body'>
+          <p id='phead'>Create account</p>
+          User : <input type='text' class='form-control' id='user'/>
+          Pass : <input type='password' class='form-control' id='pass'/>
+          <input type='radio' class='radio' name='status' id='admin'/>Admin &emsp;
+              <input type='radio' class='radio' name='status' id='staff' />Staff
+          </div><div class='modal-footer'>
+              <button type='button' id='btnadd' class='btn btn-primary' onclick='addhw()' >Create</button>&emsp;
+              <button type='button' class='btn btn-danger' data-dismiss='modal'>Close</button>
+              </div></div></div></div> -->
+
+        <div class='container'>
+        <div class="modal fade" id="myModal" role="dialog"><div class="modal-dialog">
+            <div class="modal-content"><div class="modal-body">
+                <p>Upload image</p>
+                  <input style="font-size: 20px;" type="file" id="imginput" accept="image/*" class="form-control">
+                </div>
+                <div class="modal-footer">
+                  <button type='button' id='btnedit' class='btn btn-primary' onclick='upload()'>Upload</button>&emsp;
+                  <button type='button' class='btn btn-danger' data-dismiss='modal'>Close</button>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+        <div class='container'>
+          <h1>System management</h1>
+          <div class='card'>
+            <div class='card-body'>
+              <div style="text-align: right;"><a href="javascript:openmodal()">แก้ไขรูปภาพ</a></div>
+              <img class="center" id="img" width="100%"/>
+              <div style="text-align: right;margin-top: 20px;">
+                อาคาร <span id="bu"></span>  ชั้น <span id="flo"></span>
+              <div class="btn-group">
+                  <button style="font-size: 25px;" type="button" class="btn btn-outline-dark dropdown-toggle" data-toggle="dropdown">
+                    อาคารจอดรถ
+                  </button>
+                  <div id="imgbdd" class="dropdown-menu">
+                    <button class="dropdown-item" type="button" onclick="">Link 1</button>
+                  </div>
+                </div>
+              <div class="btn-group">
+                  <button style="font-size: 25px;" type="button" class="btn btn-outline-dark dropdown-toggle" data-toggle="dropdown">
+                    ชั้นจอดรถ
+                  </button>
+                  <div id="imgfdd" class="dropdown-menu">
+                    <a class="dropdown-item" href="#">Link 1</a>
+                  </div>
+                </div>
+              <button id="show" type="button" style="font-size: 25px;" class="btn btn-outline-dark" onclick="show()">แสดง</button>
+            </div>
+          </div>
+              
+
+          </div>
+          <div id="demo">
+
+            <!-- <h2>BUUUUU</h2>
+          <div class='card'>
+            <div class='card-body'>
+              <a href=""></a>
+              <h2 class='card-title'>............</h2>
+              <h2 class='card-title'>............</h2>
+              <input type="text">
+            </div>
+          </div> -->
+
+        </div>
+
+        </div>
+      </div>
+    
+<script>
+
+        var queryString = window.location.search;
+        var urlParams = new URLSearchParams(queryString);
+        var user = urlParams.get('url');
+        if(user)
+        {
+            try {
+            user = window.atob(window.atob(user));
+            }
+            catch(err) {
+                out();
+            }
+            ref = firebase.database().ref('check');
+            ch = 0;
+            ref.once("value", function (snapshot) {
+                snapshot.forEach(function (data) {
+                    if(data.key==user) ch = 1;
+                })
+                if(ch != 1) out();
+            })
+        }else out();
+
+        function next(url){
+            window.location.replace(url+'?url='+window.btoa(window.btoa(user)));
+        }
+
+        function logout(){
+            if (confirm("Confirm to logout")) {
+                ref = firebase.database().ref('check/'+user);
+                ref.remove();
+                out();
+            }  
+        }
+
+        function out() {
+            window.location.replace('https://testeverything-63c3c.firebaseapp.com/');
+        }
+
+  var bu='/b1';
+  var flo='/f1';
+  document.getElementById('bu').textContent = 1;
+  document.getElementById('flo').textContent = 1;
+  var storageRef = firebase.storage().ref();
+  var imagesRef = storageRef.child(bu+flo+'/img.png');
+  imagesRef.getDownloadURL().then(function(metadata) {
+    document.getElementById('img').src = metadata;
+  }).catch(function(error) {
+        storageRef.child('img.png').getDownloadURL().then(function(metadata) {
+        document.getElementById('img').src = metadata;
+      })});
+
+  var path = 'status_and_name';
+  var html = '';
+  var ref = firebase.database().ref(path);
+  ref.on("value",function(snapshot) {
+      html = '<h1 style="display: inline;">Edit hardware</h1><a style="display: inline;margin-left: 20px" href=javascript:addhw("status_and_name","bu")>Add building</a><br>';
+      snapshot.forEach(function(data){
+      path = 'status_and_name'
+      path += '/'+data.key;//b1 2 3
+      buil = data.key;
+      html += '<h2 style="display: inline;">'+data.key+'</h2>';
+      html += '<a style="display: inline;margin-left: 20px" href=javascript:deletehw("status_and_name/'+data.key+'","bu")>Remove</a>';
+      html += '<a style="display: inline;margin-left: 20px" href=javascript:addhw("'+path+'","flo")>Add floor</a><br><div class="card"><div class="card-body">';
+      ref = firebase.database().ref(path);
+      ref.on("value",function(snapshot) {
+        snapshot.forEach(function(data){
+          path1 = path;
+          path1 += '/'+data.key;//f1 2 3
+          floor = data.key;
+          html += '<h2 style="display: inline;">'+data.key+'</h2>';
+          html += '<a style="display: inline;margin-left: 10px" href=javascript:deletehw("'+path1+'","flo")>Remove floor</a><br>';
+          ref = firebase.database().ref(path1);
+          ref.on("value",function(snapshot) {
+            snapshot.forEach(function(data){
+              path2 = path1;
+              path2 += '/'+data.key;//board || sensor
+              change = buil+'/'+floor+'/'+data.key;
+              html += '<a style="margin-left: 40px;">'+data.key+'<br></a>';
+              ref = firebase.database().ref(path2);
+              ref.on("value",function(snapshot) {
+                snapshot.forEach(function(data){
+                  namepart = path2+'/'+data.key+'/name'
+                  ref = firebase.database().ref(namepart);
+                  ref.on("value",function(snapshot){
+                    id = change+'/'+data.key;
+                    html += '<a href=javascript:change_to_edit("'+id+'") id="'+id+'" style="margin-left: 60px;">'+snapshot.val()+'<br></a>';
+                  }) }) }) }) }) }) })
+      html += '</div></div>'
+    })
+    document.getElementById("demo").innerHTML = html;
+  });
+
+  function addhw(path,hw){
+    // var ref = firebase.database().ref(part);
+    // var sub = getpart.split("_");
+    
+    var count = 0;
+    var ref = firebase.database().ref(path);
+    ref.on("value",function(snapshot) {
+      snapshot.forEach(function(data){
+        count++;
+      })
+    })
+    count+=1;
+    var text
+    if(hw=='bu') text = '/building_'+count;
+    if(hw=='flo') text = '/floor_'+count;
+    if (confirm("Confirm to Add")) {
+      ref.child(text).set("null");
+      alert('Add complete')
+    }
+  }
+
+  function deletehw(path,hw){
+    var ref = firebase.database().ref(path).remove();
+    var text
+    // if(hw=='bu') text = '/building_'+count;
+    // if(hw=='flo') text = '/floor_'+count;
+    if (confirm("Confirm to Add")) {
+      // ref.remove();
+      alert('Delete complete')
+    }
+  }
+
+  function change_to_edit(getpart){
+    var html = '';
+    var sub = getpart.split("/");
+    var part = 'status_and_name/'+getpart;
+    ref = firebase.database().ref(part);
+    ref.on("value",function(data) {
+      html = '';
+      part = 'status_and_name/'+getpart;
+      part += '/'+data.key+'/name';
+      html += '<div id="text_'+getpart+'"><form class="form-inline" id="form_'+getpart+'">'
+      html += '<label style="margin-left: 60px;" for="'+getpart+'">'+sub[3]+' :: Name : </label>';
+      html += '<input class="form-control" type="text" id="'+getpart+'" value="'+data.val().name+'"><br>';
+      radioval = data.val().type;
+      ref = firebase.database().ref('typesensor');ref.on("value",function(data) {
+        if(sub[2]=='sensor'){
+          html += '<label style="margin: 10px;">Type :</label> '
+          data.forEach(function(snap){
+            idr = getpart+'/type/'+snap.key;
+            html += '<input class="type" type="radio" name="'+getpart+'" id="'+idr+'"  value="'+snap.key+'"><label for="'+idr+'">'+snap.val()+' </label>'
+          })
+        }
+        html += '<a href=javascript:change_to_done("'+getpart+'") style="margin-left: 10px;">Edit</a>'
+        html += '</form></div>'
+        document.getElementById(getpart).outerHTML = html;
+        if(sub[2]=='sensor') radioch(radioval,getpart+'/type');
+      })
+    })
+  }
+
+  function radioch(val,path){
+    var part = 'status_and_name/'+path;
+    ref = firebase.database().ref(part);ref.once("value",function(data) {
+      if(val==data.val()){
+        document.getElementById(path+'/'+data.val()).checked = true;
+      }
+    })
+  }
+
+  function getRadioVal(form, name) {
+    var val;
+    // get list of radio buttons with specified name
+    var radios = form.elements[name];
+    
+    // loop through list of radio buttons
+    for (var i=1, len=radios.length; i<len; i++) {
+        if ( radios[i].checked ) { // radio checked?
+            val = radios[i].value; // if so, hold its value in val
+            break; // and break out of for loop
+        }
+    }
+    return val; // return value of checked radio or undefined if none checked
+}
+
+  async function change_to_done(getpart){
+    changetext = document.getElementById(getpart).value;
+    var html = '';
+    var name = '';
+    var sub = getpart.split("/");
+    var val = '' ;
+    var valtype = '' ;
+    if(sub[2]=='sensor') val = await getRadioVal(document.getElementById('form_'+getpart),getpart);
+    var path = 'status_and_name/'+getpart;
+    var ref = firebase.database().ref(path);
+    ref.once("value",function(snapshot) {
+      name = snapshot.val().name;
+      valtype = snapshot.val().type;
+    })
+      if (confirm("Confirm to edit")) {
+        ref.child('name').set(changetext);
+        if(sub[2]=='sensor') ref.child('type').set(val);
+        alert("Edit complete");
+      }
+      //console.log(name);
+      //console.log(valtype);
+      html += '<a href=javascript:change_to_edit("'+getpart+'") id="'+getpart+'" style="margin-left: 60px;">'+name+'<br></a>';
+      //console.log(getpart);
+      // document.getElementById('text_'+getpart).innerHTML = html;
+      if(sub[2]=='sensor') if(changetext==name && val==valtype) document.getElementById('text_'+getpart).outerHTML = html;
+      if(changetext==name && sub[2]=='board') document.getElementById('text_'+getpart).outerHTML = html;
+  }
+
+  function upload(){
+      var file = document.getElementById("imginput").files[0];
+      var blob = file.slice(0, file.size, 'image/*');
+      newFile = new File([blob], 'img.png', {type: 'image/*'});
+      var imagesRef = storageRef.child(bu+flo+'/img.png');
+      // imagesRef.put(file);
+      imagesRef.put(newFile);
+      imagesRef.getDownloadURL().then(function(metadata) {
+        document.getElementById('img').src = metadata;
+        alert('Upload complete')
+      }, 1000).catch(function(error) {});
+    $("#myModal").modal('hide');
+    document.getElementById("imginput").innerHTML = null
+    // alert('Upload complete')
+  }
+
+  function openmodal(){
+    $("#myModal").modal();
+
+  }
+
+  function setpath(b,f){
+    if(b!=0){
+      bu='/b'+b;document.getElementById('bu').textContent = b;
+    } else if(f!=0){
+      flo='/f'+f;document.getElementById('flo').textContent = f;
+    }
+    document.getElementById("show").style.color = 'red';
+  }
+
+  function show(){
+    var imagesRef = storageRef.child(bu+flo+'/img.png');
+    imagesRef.getDownloadURL().then(function(metadata) {
+      document.getElementById('img').src = metadata;
+      }).catch(function(error) {
+        storageRef.child('img.png').getDownloadURL().then(function(metadata) {
+          document.getElementById('img').src = metadata;
+        })
+      })
+      document.getElementById("show").style.color = null;
+  }
+
+  var countb=0,countf=0;
+  var htmlb = '',htmlf = '';
+
+  var Ref = firebase.database().ref('status_and_name');
+  Ref.on('value',function(snapshot){
+    snapshot.forEach(element => {
+      countb++;
+      htmlb += "<button class='dropdown-item' type='button' onclick='setpath("+countb+",0)'>"+countb+"</button>";
+      Ref = firebase.database().ref('/status_and_name/'+element.key);
+      Ref.on('value',function(snapshot){
+        snapshot.forEach(element =>{
+          countf++;
+          htmlf += "<button class='dropdown-item' type='button' onclick='setpath(0,"+countf+")'>"+countf+"</button>";
+        })
+        
+      })
+      
+
+    });
+    document.getElementById('imgbdd').innerHTML = htmlb;
+    document.getElementById('imgfdd').innerHTML = htmlf;
+  })
+    
+  function dbval(path) {
+    return firebase.database().ref(path)
+    .once('value')
+    .then(function(bref) {
+        var data= bref.val();
+        return data
+    });
+  }
+
+
+</script>
+
+</body>
+</html>

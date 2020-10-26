@@ -1,0 +1,345 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage notification</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    
+    <script src="https://www.gstatic.com/firebasejs/7.6.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.2/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.2/firebase-database.js"></script>
+    <link href="/templates/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        var Config = {
+            apiKey: "AIzaSyCZ4ar-3tDLt_SVnOraKlOwxOnfxAfhLtQ",
+            authDomain: "testeverything-63c3c.firebaseapp.com",
+            databaseURL: "https://testeverything-63c3c.firebaseio.com",
+            projectId: "testeverything-63c3c",
+            storageBucket: "testeverything-63c3c.appspot.com",
+            messagingSenderId: "1019130368477",
+            appId: "1:1019130368477:web:c9f0d0d6c93c39335c2634",
+            measurementId: "G-JSP9LJX1QF"
+        };
+        firebase.initializeApp(Config);
+        firebase.analytics();
+
+    </script>
+    <style>
+        body {
+          margin: 0;
+          font-family: 'TH SarabunPSK';
+          background-color: #F1F1F1;
+          font-size: 30px;
+        }
+        
+        ul {
+          list-style-type: none;
+          margin: 0;
+          padding: 0;
+          width: 15%;
+          background-color: #2E5597;
+          position: fixed;
+          height: 100%;
+          overflow: auto;
+        }
+        
+        li a {
+          display: block;
+          color: rgb(163, 163, 163);
+          padding: 12px 20px;
+          text-decoration: none;
+          font-size: 30px;
+        }
+
+        li a.active {
+          background-color: #243F6D;
+          color: white;
+        }
+        
+        li a:hover:not(.active) {
+          background-color: rgb(116, 116, 116);
+          color: rgb(211, 211, 211);
+        }
+
+        img.center {
+            display: block;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        h1{
+            font-size:60px;
+            margin-left:20px;
+        }
+
+        span.card-title,a.edit,p.mo{
+            font-size:30px;
+            margin-left:20px;
+        }
+        div.card{
+          margin: 20px 0 20px 0;
+        }
+        #c0{
+          color: rgb(255, 0, 0);
+        }
+        a:link.mo{
+          color: rgb(255, 0, 0);
+        }
+
+        </style>
+</head>
+<body>
+  
+    <ul>
+        <li><a class="active" style="font-size: 35px;color: rgb(212, 225, 255);">Parking System</a></li>
+        <li><img class="center" src="icon.png"></li>
+        <li><a href="javascript:next('https://testeverything-63c3c-status.firebaseapp.com/')">Usage status</a></li>
+        <li><a class="active">Manage notification</a></li>
+        <li><a href="javascript:next('https://testeverything-63c3c-report.firebaseapp.com/')">Report</a></li>
+        <li><a href="javascript:next('https://testeverything-63c3c-park.firebaseapp.com/')">System management</a></li>
+        <li><a href="javascript:next('https://testeverything-63c3c-account-1.firebaseapp.com/')">Manage account</a></li>
+        <li style="padding: 12px 20px;"><button type="button" class="btn btn-dark" style="font-size: 25px;" onclick="logout()">Log Out</button></li>
+      </ul>
+      <div style="margin-left:15%;padding:1px 16px;">
+        <div class="modal fade" id="myModal" role="dialog"><div class="modal-dialog">
+          <div class="modal-content"><div class="modal-body">
+              <label>Edit text</label>
+                  borad/web :<input id="borad/web" type="text" class="form-control"/>
+                  sensor/app :<input id="sensor/app" type="text" class="form-control"/>
+                  sensor/web :<input id="sensor/web" type="text" class="form-control"/>
+              </div>
+              <div class="modal-footer">
+              <button type="button" class='btn btn-primary' onclick="edit_text()" >Edit</button>&emsp;
+                  <button type="button" class='btn btn-danger' data-dismiss="modal">Close</button>
+              </div>
+          </div>
+          </div>
+      </div>
+
+      <div class="modal fade" id="myModal2" role="dialog"><div class="modal-dialog">
+        <div class="modal-content"><div class="modal-body">
+            <label>Add correction : <label id='keycorrection'></label></label><br>
+            correction :<input id="correction" type="text" class="form-control"/>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class='btn btn-primary' onclick="add_text()">Add</button>&emsp;
+                <button type="button" class='btn btn-danger' data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+      <div class="modal fade" id="myModal3" role="dialog"><div class="modal-dialog">
+        <div class="modal-content"><div class="modal-body">
+            <label>Edit loop : <label id='keyloop'></label></label><br>
+            Loop :<!-- <input id="loop" type="number" class="form-control"/><br/>
+            *ตัวอย่าง 20 ,30 ,60 ,120 ,180 min ไม่เกิน 1440 min* -->
+
+            <div class="input-group mb-3">
+              <select class="custom-select" id="loop">
+                <option selected>Choose Time</option>
+                <option value="5">5 min</option>
+                <option value="15">15 min</option>
+                <option value="30">30 min</option>
+                <option value="60">1 Hr</option>
+                <option value="180">3 Hr</option>
+                <option value="360">6 Hr</option>
+                <option value="720">12 Hr</option>
+                <option value="1440">24 Hr</option>
+              </select>
+            </div>
+            
+            </div>
+            <div class="modal-footer">
+            <button type="button" class='btn btn-primary' onclick="add_loop()">Edit</button>&emsp;
+                <button type="button" class='btn btn-danger' data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+        <div class='container'>
+          <h1>Manage notification</h1>
+          <a class="edit" href="javascript:openmodal()">Edit text</a>
+          <div id="demo"></div>
+
+        </div>
+      </div>
+    
+<script>
+
+        var queryString = window.location.search;
+        var urlParams = new URLSearchParams(queryString);
+        var user = urlParams.get('url');
+        if(user)
+        {
+            try {
+            user = window.atob(window.atob(user));
+            }
+            catch(err) {
+                out();
+            }
+            ref = firebase.database().ref('check');
+            ch = 0;
+            ref.once("value", function (snapshot) {
+                snapshot.forEach(function (data) {
+                    if(data.key==user) ch = 1;
+                })
+                if(ch != 1) out();
+            })
+        }else out();
+
+        function next(url){
+            window.location.replace(url+'?url='+window.btoa(window.btoa(user)));
+        }
+
+        function logout(){
+            if (confirm("Confirm to logout")) {
+                ref = firebase.database().ref('check/'+user);
+                ref.remove();
+                out();
+            }  
+        }
+
+        function out() {
+            window.location.replace('https://testeverything-63c3c.firebaseapp.com/');
+        }
+
+        function openmodal() {
+          var Ref = firebase.database().ref("Alert_text_type/borad/web");
+          Ref.on("value",function(snapshot){
+            document.getElementById("borad/web").value = snapshot.val();
+          })
+          Ref = firebase.database().ref("Alert_text_type/sensor/app");
+          Ref.on("value",function(snapshot){
+            document.getElementById("sensor/app").value = snapshot.val();
+          })
+          Ref = firebase.database().ref("Alert_text_type/sensor/web");
+          Ref.on("value",function(snapshot){
+            document.getElementById("sensor/web").value = snapshot.val();
+          })
+          $("#myModal").modal();
+        }
+        function edit_text(){
+          var addRef = firebase.database().ref('Alert_text_type');
+                    addRef.child('borad/web').set(document.getElementById('borad/web').value);
+                    addRef.child('sensor/app').set(document.getElementById('sensor/app').value);
+                    addRef.child('sensor/web').set(document.getElementById('sensor/web').value);
+                    alert("Edit complete");$("#myModal").modal('hide');
+        }
+        function openmodal2(key) {
+          $("#myModal2").modal();
+          document.getElementById("keycorrection").innerHTML = key;
+          document.getElementById("correction").value = '';
+        }
+        function openmodal3(key) {
+          document.getElementById("keyloop").innerHTML = key;
+          var keyloop = document.getElementById("keyloop").textContent;
+          var addRef = firebase.database().ref('Alert_text/'+keyloop+'/loop');
+          addRef.on("value", function (snapshot) {
+            document.getElementById("loop").value = snapshot.val();
+          })
+          $("#myModal3").modal();
+        }
+        function add_loop(){
+          var chack=0;
+          var loop = document.getElementById('loop').value;
+          if(loop>60 && loop%60==0){
+            chack = 1;
+          }else if(loop<=60 && 60%loop==0){
+            chack = 1;
+          }
+          if(loop!='' && chack==1){
+            var keyloop = document.getElementById("keyloop").textContent;
+            var addRef = firebase.database().ref('Alert_text/'+keyloop);
+              addRef.child('loop').set(document.getElementById('loop').value);
+            }else{
+              alert("Incorrect data");
+            }
+          $("#myModal3").modal('hide');
+        }
+        function add_text(){
+          if(document.getElementById('correction').value!=''){
+            var keycorrection = document.getElementById("keycorrection").textContent;
+            var addRef = firebase.database().ref('Alert_text/'+keycorrection);
+              addRef.child('correction').set(document.getElementById('correction').value);
+              addRef.child('timef').set(formatDate(new Date()));
+              addRef.child('status').set('1');alert("Add complete");
+            }else{
+              alert("Incomplete data");
+            }
+          $("#myModal2").modal('hide');
+        }
+          function formatDate(date) {
+            var day = date.getDate();
+            day = day < 10 ? '0'+day : day;
+            var month = date.getMonth()+1;
+            month = month < 10 ? '0'+month : month;
+            var minutes = date.getMinutes();
+            minutes = minutes < 10 ? '0'+minutes : minutes;
+            var sec = date.getSeconds();
+            sec = sec < 10 ? '0'+sec: sec;
+            var strTime = date.getHours() + ':' + minutes + ':'+ sec;
+            return  day + "-" + month + "-" + date.getFullYear() + " " + strTime;
+          }
+
+        var textref = "Alert_text";
+        var Ref = firebase.database().ref(textref);
+        Ref.on("value", function (snapshot) {
+          html = "";
+          snapshot.forEach(function (data) {
+            textref = 'Alert_text/'+data.key;//1 2 3 4
+            var Ref = firebase.database().ref(textref);
+            test = ""
+            Ref.on("value", function (snapshot) {
+                html += "<div class='card' id='c"+snapshot.val().status+"''><div class='card-body'>";
+                html += "<p class='inline'>"+data.key;
+                html += "&ensp;<span class='card-title' id=text"+data.key+">"+snapshot.val().text+"</span>"
+                html += "&ensp;<span class='card-title' id=hard"+data.key+">"+snapshot.val().nameid+"</span>"
+                if(snapshot.val().status=="0"){
+                  html += "&ensp;<span class='card-title'>สถานะ:ยังไม่ถูกแก้ไข</span>"
+                  html += "&ensp;<span class='card-title'>เวลา:"+snapshot.val().time+"</span></p>"
+                  html += "&ensp;<a class='mo' href='javascript:openmodal2("+ data.key +")'>Edit correction</a>";
+                  html += "&ensp;&ensp;<a class='mo' href='javascript:openmodal3("+ data.key +")'>Edit loop</a>";
+                }else if(snapshot.val().status=="1"){
+                  html += "&ensp;<span class='card-title'>สถานะ:แก้ไขแล้ว</span>"
+                  html += "<br/><span class='card-title'>บันทึก:"+snapshot.val().correction+"</span>"
+                  html += "&ensp;<span class='card-title'>เวลา:"+snapshot.val().time+"ถึง"+snapshot.val().timef+"</span>"
+                }
+                
+            })
+            html += "</p></div></div>";
+            document.getElementById("demo").innerHTML = html;
+          })
+        });
+        //เปลี่ยนข้อความแสดงผล
+          var Ref = firebase.database().ref("Alert_text");
+          Ref.on("value", function (snapshot) {
+            snapshot.forEach(function(key){
+              var keytext = 'text'+key.key;//text1 2 3
+              var text = document.getElementById(keytext).textContent;//borad/web
+              var Ref = firebase.database().ref('Alert_text_type/'+text);
+                Ref.on("value",function(snapshot){
+                document.getElementById(keytext).innerHTML = snapshot.val();
+              })
+              var keyhard = 'hard'+key.key;
+              var texthard = document.getElementById(keyhard).textContent;
+              var Ref = firebase.database().ref('status_and_name/'+texthard);
+                Ref.on("value",function(snapshot){
+                document.getElementById(keyhard).innerHTML = 'อุปกรณ์:'+snapshot.val();
+              })
+            })
+          })
+
+
+</script>
+
+</body>
+</html>

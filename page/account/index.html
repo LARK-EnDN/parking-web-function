@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Manage account</title>
+    <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/7.6.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.2/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.2/firebase-database.js"></script>
+    <link href="/templates/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        var Config = {
+            apiKey: "AIzaSyCZ4ar-3tDLt_SVnOraKlOwxOnfxAfhLtQ",
+            authDomain: "testeverything-63c3c.firebaseapp.com",
+            databaseURL: "https://testeverything-63c3c.firebaseio.com",
+            projectId: "testeverything-63c3c",
+            storageBucket: "testeverything-63c3c.appspot.com",
+            messagingSenderId: "1019130368477",
+            appId: "1:1019130368477:web:c9f0d0d6c93c39335c2634",
+            measurementId: "G-JSP9LJX1QF"
+        };
+        firebase.initializeApp(Config);
+        firebase.analytics();
+    </script>
+        <style>
+        h1{
+            font-size:60px;
+            margin-left:20px;
+        }
+        h2,a.aadd{
+            font-size:40px;
+            margin-left:20px;
+        }
+        body {
+            font-size:30px;margin: 0;
+            font-family:'TH SarabunPSK';
+            background-color: #F1F1F1;
+        }
+        p,a.js{
+            margin-left:20px;
+        }
+        .form-control{
+            margin-top:10px;
+        }
+        .radio{
+            margin-top:20px;
+            margin-left:20px;
+        }
+        .btn{
+            font-size:20px;
+        }
+
+        ul {
+          list-style-type: none;
+          margin: 0;
+          padding: 0;
+          width: 15%;
+          background-color: #2E5597;
+          position: fixed;
+          height: 100%;
+          overflow: auto;
+        }
+        
+        li a {
+          display: block;
+          color: rgb(163, 163, 163);
+          padding: 12px 20px;
+          text-decoration: none;
+          font-size: 30px;
+        }
+
+        li a.active {
+          background-color: #243F6D;
+          color: white;
+        }
+        
+        li a:hover:not(.active) {
+          background-color: rgb(116, 116, 116);
+          color: rgb(211, 211, 211);
+        }
+
+        img.center {
+            display: block;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+
+    </style>
+
+
+</head>
+<body>
+    <ul>
+        <li><a class="active" style="font-size: 35px;color: rgb(212, 225, 255);">Parking System</a></li>
+        <li><img class="center" src="icon.png"></li>
+        <li><a href="javascript:next('https://testeverything-63c3c-status.firebaseapp.com/')">Usage status</a></li>
+        <li><a href="javascript:next('https://testeverything-63c3c-alert.firebaseapp.com/')">Manage notification</a></li>
+        <li><a href="javascript:next('https://testeverything-63c3c-report.firebaseapp.com/')">Report</a></li>
+        <li><a href="javascript:next('https://testeverything-63c3c-park.firebaseapp.com/')">System management</a></li>
+        <li><a class="active">Manage account</a></li>
+        <li style="padding: 12px 20px;"><button type="button" class="btn btn-dark" style="font-size: 25px;" onclick="logout()">Log Out</button></li>
+      </ul>
+
+    
+    
+
+    <div style="margin-left:15%;padding:1px 16px;">
+        <div class='modal fade' id='myModal'><div class='modal-dialog'>
+            <div class='modal-content'><div class='modal-body'>
+            <p id='phead'>Create account</p>
+            User : <input type='text' class='form-control' id='user'/>
+            Pass : <input type='password' class='form-control' id='pass'/>
+            <input type='radio' class='radio' name='status' id='admin'/>Admin &emsp;
+                <input type='radio' class='radio' name='status' id='staff' />Staff
+            </div><div class='modal-footer'>
+                <button type='button' id='btnadd' class='btn btn-primary' onclick='addaccount()' >Create</button>&emsp;
+                <button type='button' id='btnedit' class='btn btn-primary' onclick='editaccount()' >Edit</button>&emsp;
+                <button type='button' class='btn btn-danger' data-dismiss='modal'>Close</button>
+                </div></div></div></div>
+        <div id="demo"></div>
+    </div>
+    <script>
+
+        var queryString = window.location.search;
+        var urlParams = new URLSearchParams(queryString);
+        var user = urlParams.get('url');
+        if(user)
+        {
+            try {
+            user = window.atob(window.atob(user));
+            }
+            catch(err) {
+                out();
+            }
+            ref = firebase.database().ref('check');
+            ch = 0;
+            ref.once("value", function (snapshot) {
+                snapshot.forEach(function (data) {
+                    if(data.key==user) ch = 1;
+                })
+                if(ch != 1) out();
+            })
+        }else out();
+
+        function next(url){
+            window.location.replace(url+'?url='+window.btoa(window.btoa(user)));
+        }
+
+        function logout(){
+            if (confirm("Confirm to logout")) {
+                ref = firebase.database().ref('check/'+user);
+                ref.remove();
+                out();
+            }  
+        }
+
+        function out() {
+            window.location.replace('https://testeverything-63c3c.firebaseapp.com/');
+        }
+
+        var Sref = "account";
+        var scoresRef = firebase.database().ref(Sref);
+        scoresRef.on("value", function (snapshot) {
+            html = "<div class='container'><h1>Manage account</h1><a href=javascript:openmodal('add') class='aadd'>Add account</a>";
+            html += "<a href=javascript:openmodal('add') class='aadd'>Add account</a>"
+            snapshot.forEach(function (data) {//name
+                // console.log(account);
+                html += "<div class='card'> <div class='card-body'><h2 class='card-title'>" + data.key +"</h2>";
+                scoresRef = firebase.database().ref(Sref + "/" + data.key);// status_and_name/name
+                scoresRef.on("value", function (snapshot) {
+                    snapshot.forEach(function (data) {
+                        if (data.key != "pass") {
+                            html += "<p>"+ data.key + " : " + data.val() + "</p>";
+                        }
+                        
+                    });
+                    html += "<a href=javascript:accountdelete('" + data.key + "') class='js'>Remove</a>&emsp;"+
+                        "<a href=javascript:openmodal('edit','" + data.key + "','" + data.val().status + "') class='js'>Edit</a> ";
+                });
+                html += "</div></div><br>"
+            });
+            html += "</div>"
+            document.getElementById("demo").innerHTML = html;
+        });
+
+        function accountdelete(acc) {
+            if (acc == "admin") { alert("You can not remove admin");}
+            else if (confirm("Confirm to remove")) {
+                    var adaRef = firebase.database().ref('account/' + acc);
+                    adaRef.remove()
+                        .then(function () {
+                            alert("Remove Done");
+                        })
+                        .catch(function (error) {
+                        });
+            }
+        }
+        function openmodal(tag,acc,sta) {
+            if(tag == 'add'){
+                $("#myModal").modal();
+                $("#btnedit").hide();
+                $("#btnadd").show();
+                document.getElementById("user").value = "";
+                document.getElementById("pass").value = "";
+                document.getElementById("phead").innerHTML = "Create account";
+                document.getElementById("admin").checked = false;
+                document.getElementById("staff").checked = false;
+                document.getElementById("user").disabled = false;
+                
+            }
+            if (tag == 'edit') {
+                $("#myModal").modal();
+                $("#btnadd").hide();
+                $("#btnedit").show();
+                document.getElementById("pass").value = "";
+                document.getElementById(sta).checked = true;
+                document.getElementById("phead").innerHTML = "Edit account";
+                document.getElementById("user").value = acc;
+                document.getElementById("user").disabled = true;
+            }
+
+        }
+        function editaccount() {
+            var user = document.getElementById("user").value
+            var pass = document.getElementById("pass").value
+            var chadmin = document.getElementById("admin").checked
+            var chastaff = document.getElementById("staff").checked
+            if (chadmin == true) { var status = "admin" }
+            else if (chastaff == true) { var status = "staff" }
+            if (pass == "" || status == "") { alert("Incomplete data") }
+            else {
+                var addRef = firebase.database().ref('account/' + user);
+                addRef.child('pass').set(pass);
+                addRef.child('status').set(status);
+                alert("Edit complete");
+            }
+            user = ""; pass = ""; status = "";
+            $("#myModal").modal('hide');
+        }
+
+        function addaccount() {
+            var user = document.getElementById("user").value
+            var Ref = firebase.database().ref("account");
+            var exist = false;
+            Ref.on("value", function (snapshot) {
+                snapshot.forEach(function (data) { if (data.key == user) { exist = true; }
+                })
+            })
+            if (exist == false){
+                
+                var pass = document.getElementById("pass").value
+                var chadmin = document.getElementById("admin").checked
+                var chastaff = document.getElementById("staff").checked
+                if (chadmin == true) { var status = "admin" }
+                else if (chastaff == true) { var status = "staff" }
+                if (user == "" || pass == "" || status == "") { alert("Incomplete data") }
+                else {
+                    var addRef = firebase.database().ref('account/' + user.toLowerCase());
+                    addRef.child('pass').set(pass);
+                    addRef.child('status').set(status);
+                    alert("Create complete");
+                }
+                user = ""; pass = ""; status = "";
+                $("#myModal").modal('hide');
+            } else alert("The account already exists");
+        }
+
+ 
+    </script>
+</body>
+</html>

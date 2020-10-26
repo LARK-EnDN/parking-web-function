@@ -1,0 +1,432 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.2/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.2/firebase-database.js"></script>
+    <link href="/templates/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        var Config = {
+            apiKey: "AIzaSyCZ4ar-3tDLt_SVnOraKlOwxOnfxAfhLtQ",
+            authDomain: "testeverything-63c3c.firebaseapp.com",
+            databaseURL: "https://testeverything-63c3c.firebaseio.com",
+            projectId: "testeverything-63c3c",
+            storageBucket: "testeverything-63c3c.appspot.com",
+            messagingSenderId: "1019130368477",
+            appId: "1:1019130368477:web:c9f0d0d6c93c39335c2634",
+            measurementId: "G-JSP9LJX1QF"
+        };
+        firebase.initializeApp(Config);
+        firebase.analytics();
+        </script>
+    <style>
+        body {
+          margin: 0;
+          font-family: 'TH SarabunPSK';
+          background-color: #F1F1F1;
+        }
+        
+        ul {
+          list-style-type: none;
+          margin: 0;
+          padding: 0;
+          width: 15%;
+          background-color: #2E5597;
+          position: fixed;
+          height: 100%;
+          overflow: auto;
+        }
+        
+        li a {
+          display: block;
+          color: rgb(163, 163, 163);
+          padding: 12px 20px;
+          text-decoration: none;
+          font-size: 30px;
+        }
+
+        li a.active {
+          background-color: #243F6D;
+          color: white;
+        }
+        
+        li a:hover:not(.active) {
+          background-color: rgb(116, 116, 116);
+          color: rgb(211, 211, 211);
+        }
+
+        .center {
+            display: block;
+            width: 100%;
+            margin: 0 auto;
+        }
+        h1{
+            font-size:60px;
+            margin-left:20px;
+        }
+        .card{
+          margin-top: 20px;
+        }
+
+        </style>
+</head>
+<body>
+  
+    <ul>
+        <li><a class="active" style="font-size: 35px;color: rgb(212, 225, 255);">Parking System</a></li>
+        <li><img class="center" src="icon.png"></li>
+        <li><a href="javascript:next('https://testeverything-63c3c-status.firebaseapp.com/')">Usage status</a></li>
+        <li><a href="javascript:next('https://testeverything-63c3c-alert.firebaseapp.com/')">Manage notification</a></li>
+        <li><a class="active">Report</a></li>
+        <li><a href="javascript:next('https://testeverything-63c3c-park.firebaseapp.com/')">System management</a></li>
+        <li><a href="javascript:next('https://testeverything-63c3c-account-1.firebaseapp.com/')">Manage account</a></li>
+        <li style="padding: 12px 20px;"><button type="button" class="btn btn-dark" style="font-size: 25px;" onclick="logout()">Log Out</button></li>
+      </ul>
+      <div style="margin-left:15%;padding:1px 16px;">
+        <div class="center" style="width: 90%;">
+          <h1>Report</h1>
+          <div class='card'>
+            <div class='card-body'>
+              <div id="myCh"><canvas id="myChart" width="400" height="200"></canvas></div>
+              
+                <div style="margin-top:20px;">
+                  <input class="btn btn-outline-primary" style="font-size: 25px;margin-left: 30px;" type="date" id="date" name="daytodo">
+                  <button type="button" style="font-size: 25px;" class="btn btn-outline-primary" onclick="dmy1()">แสดงข้อมูลรายวัน</button>
+                  <button type="button" style="font-size: 25px;" class="btn btn-outline-primary" onclick="dmy2()">แสดงข้อมูลรายเดือน</button>
+                  <button type="button" style="font-size: 25px;" class="btn btn-outline-primary" onclick="dmy3()">แสดงข้อมูลรายปี</button>  
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    
+<script>
+
+        var queryString = window.location.search;
+        var urlParams = new URLSearchParams(queryString);
+        var user = urlParams.get('url');
+        if(user)
+        {
+            try {
+            user = window.atob(window.atob(user));
+            }
+            catch(err) {
+                out();
+            }
+            ref = firebase.database().ref('check');
+            ch = 0;
+            ref.once("value", function (snapshot) {
+                snapshot.forEach(function (data) {
+                    if(data.key==user) ch = 1;
+                })
+                if(ch != 1) out();
+            })
+        }else out();
+
+        function next(url){
+            window.location.replace(url+'?url='+window.btoa(window.btoa(user)));
+        }
+
+        function logout(){
+            if (confirm("Confirm to logout")) {
+                ref = firebase.database().ref('check/'+user);
+                ref.remove();
+                out();
+            }  
+        }
+
+        function out() {
+            window.location.replace('https://testeverything-63c3c.firebaseapp.com/');
+        }
+
+var ck_ch;
+
+function dmy1(){
+  var date = document.getElementById("date").value;
+  if(date!=''){
+    if(ck_ch==1){document.getElementById("myCh").innerHTML ="<canvas id='myChart' width='400' height='200'></canvas>";}
+    countday(date);
+  }else{
+    alert("Select date");
+  }
+  
+}
+function dmy2(){
+  var date = document.getElementById("date").value;
+  var chartch = document.getElementById("myChart").value;
+  if(date!=''){
+    if(ck_ch==1){document.getElementById("myCh").innerHTML ="<canvas id='myChart' width='400' height='200'></canvas>";}
+    countmonth(date);
+  }else{
+    alert("Select date");
+  }
+}
+function dmy3(){
+  var date = document.getElementById("date").value;
+  if(date!=''){
+    if(ck_ch==1){document.getElementById("myCh").innerHTML ="<canvas id='myChart' width='400' height='200'></canvas>";}
+    countyear(date)
+  }else{
+    alert("Select date");
+  }
+}
+
+function countday(date){
+  var count = [];
+  var labels = [];
+  for(i=0;i<24;i++){
+    count.push(0);
+    if(i<10){
+      labels.push('0'+i+':00')
+    }else{
+      labels.push(i+':00')
+    }
+  }
+  var Ref = firebase.database().ref("Status_record/"+date);
+  Ref.on("value",function (snapshot) {
+    snapshot.forEach(function (no) {
+      var Ref = firebase.database().ref("Status_record/"+date+"/"+no.key);
+      Ref.on("value",function (data){
+        if(data.val().status == 1){
+          Hr = data.val().time;
+          Hr = Hr.split(":");
+          Hr = parseInt(Hr[0])
+          count[Hr] += 1;
+        }
+      })
+    })
+    var ctx = document.getElementById('myChart');
+    var myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,//x
+        datasets: [{
+            label: date,//text line
+            data: count,//y
+            fill:false,
+            borderColor: 'rgb(82, 187, 255)'
+          }]
+      },
+      options: {
+        title:{
+            display:true,
+            text:'ข้อมูลรายวัน'
+          },
+          scales: {
+              yAxes: [{
+                  ticks: {
+                    stepSize: 1,
+                    suggestedMin: 0,
+                  }
+              }]
+            }
+          }
+    });
+    ck_ch = 1;
+    count = [];
+  })
+}
+function countmonth(month) {
+  var m = month.split("-");
+  var y = m[0];
+  var mm = m[1];
+  var count = [];
+  var labels = [];
+  var maxtime = [];
+  var loop = 0;
+  if(mm==1||mm==3||mm==5||mm==7||mm==8||mm==10||mm==12){loop = 31;}
+  else if(mm == 2) {
+    loop = (y%4 == 0)&((!(y%100 == 0))||(y%400 == 0))?29:28;
+  }else{loop = 30;}
+  for(i=1;i<=loop;i++){
+    maxtime.push(null);
+    labels.push(i)
+  }
+  var Ref = firebase.database().ref("Status_record");
+  Ref.on("value",function (snapshot) {
+    snapshot.forEach(function (d) {
+      count = [];
+      for(i=0;i<24;i++){
+        count.push(0);
+      }
+      var check_m = d.key.split("-");
+      if(check_m[1] == mm && check_m[0] == y){
+        var Ref = firebase.database().ref("Status_record/"+d.key);
+        Ref.on("value",function (k) {
+          k.forEach(function (data) {
+            if(data.val().status == 1){
+              Hr = data.val().time;
+              Hr = Hr.split(":");
+              Hr = parseInt(Hr[0])
+              count[Hr] += 1;
+            }
+          })
+          max = Math.max.apply(Math, count);
+          for(i=0;i<24;i++){
+            if(count[i] == max){
+              maxtime[parseInt(check_m[2]-1)] = i*60*60;
+            }
+          }
+        })
+      }
+    })
+    var ctx = document.getElementById('myChart');
+    var myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,//x
+        datasets: [{
+            label: mm+'-'+y,//text line
+            data: maxtime,//y
+            fill:false,
+            borderColor: 'rgb(82, 187, 255)',
+            showLine: false
+          }]
+      },
+      options: {
+          title:{
+            display:true,
+            text:'ข้อมูลรายเดือน'
+          },
+          scales: {
+            yAxes: [{
+              ticks: {
+                userCallback: function(v) { return epoch_to_hh_mm_ss(v) },
+                stepSize: 60*60,
+                min: 0,
+                max: 60*60*23
+              }
+            }]
+          },
+          tooltips: {
+            callbacks: {
+              label: function(tooltipItem, data) {
+                return data.datasets[tooltipItem.datasetIndex].label + ': ' + epoch_to_hh_mm_ss(tooltipItem.yLabel)
+              }
+            }
+          }
+        }
+      });
+      ck_ch = 1;
+      maxtime = [];
+    })
+}
+function countyear(year) {
+  var m = year.split("-");
+  var y = m[0];
+  var mm = m[1];
+  var count = [];
+  var labels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var savemax = [];
+  var maxtime = [];
+  var maxinyear = [];
+  var loop = 0;
+  if(mm==1||mm==3||mm==5||mm==7||mm==8||mm==10||mm==12){loop = 31;}
+  else if(mm == 2) {
+    loop = (y%4 == 0)&((!(y%100 == 0))||(y%400 == 0))?29:28;
+  }else{loop = 30;}
+  for(i=1;i<=loop;i++){
+    maxtime.push(null);
+  }
+  var Ref = firebase.database().ref("Status_record");
+  Ref.on("value",function (snapshot) {
+    snapshot.forEach(function (d) {
+      count = [];
+      for(i=0;i<24;i++){
+        count.push(0);
+      }
+      for(i=0;i<12;i++){
+        maxinyear[i] = null;
+      }
+      var check_m = d.key.split("-");
+      if(check_m[0] == y){
+        var Ref = firebase.database().ref("Status_record/"+d.key);
+        Ref.on("value",function (k) {
+          k.forEach(function (data) {
+            if(data.val().status == 1){
+              Hr = data.val().time;
+              Hr = Hr.split(":");
+              Hr = parseInt(Hr[0])
+              count[Hr] += 1;
+            }
+          })
+          max = Math.max.apply(Math, count);
+          for(i=0;i<24;i++){
+            if(count[i] == max){
+              x = parseInt(check_m[2])
+              maxtime[x-1] = i*60*60;
+              savet = parseInt(check_m[1]-1);
+              savemax[savet] = i;//m d c
+            }//maxtime เก็บเวลาของรายเดือน
+          }//savemax เก็บค่าของเวลารายเดือน
+        })
+      }
+    })
+    for(i=0;i<12;i++){
+      maxinyear[i] = savemax[i]*60*60;
+    }
+    
+
+    var ctx = document.getElementById('myChart');
+    var myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,//x
+        datasets: [{
+            label: y,//text line
+            data: maxinyear,//y
+            fill:false,
+            borderColor: 'rgb(82, 187, 255)',
+            showLine: false
+          }]
+      },
+      options: {
+          title:{
+            display:true,
+            text:'ข้อมูลรายปี'
+          },
+          scales: {
+            yAxes: [{
+              ticks: {
+                userCallback: function(v) { return epoch_to_hh_mm_ss(v) },
+                stepSize: 60*60,
+                min: 0,
+                max: 60*60*23
+              }
+            }]
+          },
+          tooltips: {
+            callbacks: {
+              label: function(tooltipItem, data) {
+                return data.datasets[tooltipItem.datasetIndex].label + ': ' + epoch_to_hh_mm_ss(tooltipItem.yLabel)
+              }
+            }
+          }
+        }
+      });
+      ck_ch = 1;
+      maxtime = [];
+    })
+}
+
+function epoch_to_hh_mm_ss(epoch) {
+  return new Date(epoch*1000).toISOString().substr(11, 5)
+}
+
+</script>
+
+</body>
+</html>

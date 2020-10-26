@@ -1,0 +1,116 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>navigat</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    
+    <style>
+        body {
+          margin: 0;
+          font-family: 'TH SarabunPSK';
+          background-color: #F1F1F1;
+        }
+        
+        ul {
+          list-style-type: none;
+          margin: 0;
+          padding: 0;
+          width: 15%;
+          background-color: #2E5597;
+          position: fixed;
+          height: 100%;
+          overflow: auto;
+        }
+        
+        li a {
+          display: block;
+          color: rgb(163, 163, 163);
+          padding: 12px 20px;
+          text-decoration: none;
+          font-size: 30px;
+        }
+
+        li a.active {
+          background-color: #243F6D;
+          color: white;
+        }
+        
+        li a:hover:not(.active) {
+          background-color: rgb(116, 116, 116);
+          color: rgb(211, 211, 211);
+        }
+
+        img.center {
+            display: block;
+            margin: 0 auto;
+        }
+
+        </style>
+</head>
+<body>
+  
+    <ul>
+        <li><a class="active" style="font-size: 35px;color: rgb(212, 225, 255);">Parking System</a></li>
+        <li><img class="center" src="icon.png"></li>
+        <li><a href="javascript:next('https://testeverything-63c3c-status.firebaseapp.com/')">Usage status</a></li>
+        <li><a href="javascript:next('https://testeverything-63c3c-alert.firebaseapp.com/')">Manage notification</a></li>
+        <li><a href="javascript:next('https://testeverything-63c3c-report.firebaseapp.com/')">Report</a></li>
+        <li><a href="javascript:next('https://testeverything-63c3c-park.firebaseapp.com/')">System management</a></li>
+        <li><a href="javascript:next('https://testeverything-63c3c-account-1.firebaseapp.com/')">Manage account</a></li>
+        <!-- class="active" -->
+        <li style="padding: 12px 20px;"><button type="button" class="btn btn-dark" style="font-size: 25px;" onclick="logout()">Log Out</button></li>
+      </ul>
+      <div style="margin-left:15%;padding:1px 16px;height:1000px;">
+      </div>
+    
+<script>
+  /*
+  chlog();
+
+        function chlog() {
+          if(readCookie('login')!='true'){
+                    alert("Please login");
+                    window.location.replace('https://testeverything-63c3c.firebaseapp.com/');
+                }
+        }
+        function logout(){
+            if (confirm("Confirm to logout")) {
+                    eraseCookie('login','',-1)
+                    createCookie('login','false',0)
+                    window.location.replace('https://testeverything-63c3c.firebaseapp.com/');
+            }  
+        }
+        function readCookie(name) {
+                var nameEQ = name + "=";
+                var ca = document.cookie.split(';');
+                for(var i=0;i < ca.length;i++) {
+                    var c = ca[i];
+                    while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+                }
+                return null;
+            }
+        function createCookie(name,value,days) {
+                if (days) {
+                    var date = new Date();
+                    date.setTime(date.getTime()+(days*12*60*60*1000));
+                    var expires = "; expires="+date.toGMTString();
+                }
+                else var expires = "";
+                document.cookie = name+"="+value+expires+"; path=/";
+            }
+        function eraseCookie(name) {
+                createCookie(name,"",-1);
+            }
+            */
+
+</script>
+
+</body>
+</html>

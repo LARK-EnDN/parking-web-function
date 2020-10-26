@@ -1,0 +1,87 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Log in</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/7.6.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.2/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.2/firebase-database.js"></script>
+    <script>
+        var Config = {
+            apiKey: "AIzaSyCZ4ar-3tDLt_SVnOraKlOwxOnfxAfhLtQ",
+            authDomain: "testeverything-63c3c.firebaseapp.com",
+            databaseURL: "https://testeverything-63c3c.firebaseio.com",
+            projectId: "testeverything-63c3c",
+            storageBucket: "testeverything-63c3c.appspot.com",
+            messagingSenderId: "1019130368477",
+            appId: "1:1019130368477:web:c9f0d0d6c93c39335c2634",
+            measurementId: "G-JSP9LJX1QF"
+        };
+        firebase.initializeApp(Config);
+        firebase.analytics();
+
+    </script>
+    <style>
+        h1{
+            margin:20px 0 20px 0;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+        <h1>Parking Management System</h1>
+        <div class="form-group">
+            <p>User name :</p>
+            <input type="text" class="form-control" id="usr" name="username">
+          </div>
+          <div class="form-group">
+            <p>Password :</p>
+            <input type="password" class="form-control" id="pwd" name="password">
+          </div>
+          <div style="text-align:right;"><button type="submit"  class="btn btn-success" onclick="chack()">Submit</button></div>
+    </div>
+
+    <script>
+
+        function chack(){
+            var Ref = firebase.database().ref('account');
+            var user = document.getElementById("usr").value.toLowerCase();
+            var pwd = document.getElementById("pwd").value;
+            var pass = '0';
+            Ref.on("value", function(snapshot) {
+                snapshot.forEach(function(data){
+                   if(data.key==user && data.val().pass==pwd){ pass = '1' }
+                });
+                log(pass);
+            });
+            function log(pass){
+                if(pass!='0'){
+
+                    var ref = firebase.database().ref('check/' + user);
+                    ref.set(0);
+
+                    alert("Login completed");
+                
+                    url = 'https://testeverything-63c3c-status.firebaseapp.com/?url=' + window.btoa(window.btoa(user));
+                    
+                    window.location.replace(url);
+                }
+                else{
+                    alert("Login fail");
+                }
+            }
+        }
+
+        
+    </script>
+</body>
+</html>

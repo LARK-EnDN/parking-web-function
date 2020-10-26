@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Usage status</title>
+    <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/7.6.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.2/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.2/firebase-database.js"></script>
+    <link href="/templates/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <script>
+        var Config = {
+            apiKey: "AIzaSyCZ4ar-3tDLt_SVnOraKlOwxOnfxAfhLtQ",
+            authDomain: "testeverything-63c3c.firebaseapp.com",
+            databaseURL: "https://testeverything-63c3c.firebaseio.com",
+            projectId: "testeverything-63c3c",
+            storageBucket: "testeverything-63c3c.appspot.com",
+            messagingSenderId: "1019130368477",
+            appId: "1:1019130368477:web:c9f0d0d6c93c39335c2634",
+            measurementId: "G-JSP9LJX1QF"
+        };
+        firebase.initializeApp(Config);
+        firebase.analytics();
+    </script>
+    <style>
+        h1{
+            font-size:60px;
+            margin-left:20px;
+        }
+        h2{
+            font-size:50px;
+            margin-left:20px;
+        }
+        h3{
+            font-size:40px;
+            margin-left:20px;
+        }
+        body{
+            font-size:30px;
+            font-family:'TH SarabunPSK';
+        }
+        label{
+            font-size:30px;
+        }
+        .c1,.b1{
+            color: black;
+        }
+        .c0{
+            color:gainsboro;
+        }
+        .b2,.c2{
+            color:red;
+        }
+        .ptap{
+            margin-left:20px;
+        }
+        .card-body{
+            padding:40px;
+        }
+
+        body {
+          margin: 0;
+          font-family: 'TH SarabunPSK';
+          background-color: #F1F1F1;
+        }
+        
+        ul {
+          list-style-type: none;
+          margin: 0;
+          padding: 0;
+          width: 15%;
+          background-color: #2E5597;
+          position: fixed;
+          height: 100%;
+          overflow: auto;
+        }
+        
+        li a {
+          display: block;
+          color: rgb(163, 163, 163);
+          padding: 12px 20px;
+          text-decoration: none;
+          font-size: 30px;
+        }
+
+        li a.active {
+          background-color: #243F6D;
+          color: white;
+        }
+        
+        li a:hover:not(.active) {
+          background-color: rgb(116, 116, 116);
+          color: rgb(211, 211, 211);
+        }
+
+        img.center {
+            display: block;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        div.lable {
+            margin: 20px;
+        }
+
+        p.count{
+            text-align: right;
+        }
+
+    </style>
+
+
+</head>
+<body>
+    <ul>
+        <li><a class="active" style="font-size: 35px;color: rgb(212, 225, 255);">Parking System</a></li>
+        <li><img class="center" src="icon.png"></li>
+        <li><a class="active">Usage status</a></li>
+        <li><a href="javascript:next('https://testeverything-63c3c-alert.firebaseapp.com/')">Manage notification</a></li>
+        <li><a href="javascript:next('https://testeverything-63c3c-report.firebaseapp.com/')">Report</a></li>
+        <li><a href="javascript:next('https://testeverything-63c3c-park.firebaseapp.com/')">System management</a></li>
+        <li><a href="javascript:next('https://testeverything-63c3c-account-1.firebaseapp.com/')">Manage account</a></li>
+        <li style="padding: 12px 20px;"><button type="button" class="btn btn-dark" style="font-size: 25px;" onclick="logout()">Log Out</button></li>
+      </ul>
+
+    <div style="margin-left:15%;padding:1px 16px;">
+        <div id="demo"></div>
+    </div>
+
+    <script>
+        
+        var queryString = window.location.search;
+        var urlParams = new URLSearchParams(queryString);
+        var user = urlParams.get('url');
+        if(user)
+        {
+            try {
+            user = window.atob(window.atob(user));
+            }
+            catch(err) {
+                out();
+            }
+            ref = firebase.database().ref('check');
+            ch = 0;
+            ref.once("value", function (snapshot) {
+                snapshot.forEach(function (data) {
+                    if(data.key==user) ch = 1;
+                })
+                if(ch != 1) out();
+            })
+        }else out();
+
+        function next(url){
+            window.location.replace(url+'?url='+window.btoa(window.btoa(user)));
+        }
+
+        function logout(){
+            if (confirm("Confirm to logout")) {
+                ref = firebase.database().ref('check/'+user);
+                ref.remove();
+                out();
+            }  
+        }
+
+        function out() {
+            window.location.replace('https://testeverything-63c3c.firebaseapp.com/');
+        }
+
+        var html = "";
+        var Sref = "status_and_name";
+        var scoresRef = firebase.database().ref(Sref);
+        scoresRef.on("value", function (snapshot) {
+            html = "<div class='container'><h1>Usage status</h1>";
+            snapshot.forEach(function (data) {
+                html += "<h2>" + data.key + "</h2>";
+                scoresRef = firebase.database().ref(Sref + "/" + data.key);
+                var Sref2 = Sref + "/" + data.key;
+                scoresRef.on("value", function (snapshot) {
+                    snapshot.forEach(function (data) {
+                        html += "<div class='card'> <div class='card-body'><h3 class='card-title'>" + data.key + "</h3>"+"<p>Boards</p>";
+                        scoresRef = firebase.database().ref(Sref2 + "/" + data.key + "/board");
+                            html += "<div class='lable'>"
+                            scoresRef.on("value", function (snapshot) {
+                                var countboard = 0;
+                                var countBnone = 0;
+                                snapshot.forEach(function (data) {
+                                    html += "<label class=b" + data.val().status + ">" + data.val().name + "</label>&emsp;";
+                                    countboard++;
+                                    if (data.val().status == 1) countBnone++;
+                                });
+                                html += "<p class='count'>" + countBnone + " / " + countboard + "</p>";
+                                html += "</div>"
+                        });
+
+                        html += "<p>Sensors</p>";
+                        scoresRef = firebase.database().ref(Sref2 + "/" + data.key + "/sensor");
+                        html += "<div class='lable'>"
+                        scoresRef.on("value", function (snapshot) {
+                            var countsensor = 0;
+                            var countSnone = 0;
+                            snapshot.forEach(function (data) {
+                                html += "<label class=c" + data.val().status + ">" + data.val().name + "</label>&emsp;";
+                                countsensor++;
+                                if (data.val().status == 0) countSnone++;
+                            });
+                            html += "<p class='count'>" + countSnone +" / " + countsensor + "</p>";
+                            html += "</div>"
+                        });html += "</div></div><br>";
+                    });
+                });
+                
+            });
+            html += "</div>"
+            document.getElementById("demo").innerHTML = html;
+        });
+        
+
+    </script>
+    
+</body>
+</html>
