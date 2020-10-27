@@ -253,8 +253,8 @@ var REF = db.ref('status_and_name')
   REF.once("value",function(snapshot) {
     snapshot.forEach(function(b){
       REF = db.ref('status_and_name/'+b.key)
-      REF.once("value",function(f) {
-        f.forEach(function(f){
+      REF.once("value",function(snap) {
+        snap.forEach(function(f){
           REF = db.ref('status_and_name/'+b.key+'/'+f.key+'/board/1/status')
           var bb = b.key;bb = bb.split("_");
           var ff = f.key;ff = ff.split("_");
@@ -263,10 +263,11 @@ var REF = db.ref('status_and_name')
             if(b1status.val()==2){
               const ref = db.ref('Alert_text_type/sensor/app')
               ref.once("value",function(text) {
-                notification('อาคาร '+b.key+' ชั้น '+f.key+' '+text.val());
+                notification('อาคาร '+bb[1]+' ชั้น '+ff[1]+' '+text.val());
                 // console.log('อาคาร '+bb[1]+' ชั้น '+ff[1]+' '+text.val());
               });
-            }else if(b1status.val()==1){
+              statusEmp[bb[1]+'_'+ff[1]] = 0;
+            }else if(b1status.val()==1 || b1status.val()==null){
               const ref = db.ref('status_and_name/'+b.key+'/'+f.key+'/sensor')
               ref.on("value",function(snap) {
                 emp = 0;
@@ -281,6 +282,20 @@ var REF = db.ref('status_and_name')
                   // console.log('อาคาร '+bb[1]+' ชั้น '+ff[1]+' ไม่มีช่องว่าง');
                 }
               });
+            }
+            var obf = Object.keys(snap.val());
+            var obl = obf.length;
+            if(obf[obl-1] == f.key){
+              var sum=0;
+              for(const [key, value] of Object.entries(statusEmp)) {
+                sum = sum + value;
+              }
+              // console.log(sum);
+              if(sum==0){
+                notification('อาคาร '+bb[1]+' ไม่มีช่องว่าง');
+                  // console.log('อาคาร '+bb[1]+' ไม่มีช่องว่าง');
+              }
+              statusEmp = {};
             }
           });
         });
