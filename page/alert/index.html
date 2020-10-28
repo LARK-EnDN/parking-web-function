@@ -9,6 +9,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     
     <script src="https://www.gstatic.com/firebasejs/7.6.2/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-auth.js"></script>
@@ -111,7 +114,7 @@
         <div class="modal fade" id="myModal" role="dialog"><div class="modal-dialog">
           <div class="modal-content"><div class="modal-body">
               <label>Edit text</label>
-                  borad/web :<input id="borad/web" type="text" class="form-control"/>
+                  board/web :<input id="board/web" type="text" class="form-control"/>
                   sensor/app :<input id="sensor/app" type="text" class="form-control"/>
                   sensor/web :<input id="sensor/web" type="text" class="form-control"/>
               </div>
@@ -167,13 +170,39 @@
 
         <div class='container'>
           <h1>Manage notification</h1>
-          <a class="edit" href="javascript:openmodal()">Edit text</a>
+              <a class="edit" href="javascript:openmodal()">Edit text</a> <br>
+              <div class="checkbox" style="margin-left: 40px;">
+                <label>
+                  <input id="notification" type="checkbox" checked data-toggle="toggle" data-on="On" data-off="Off" data-onstyle="success" data-offstyle="danger"> System Timer
+                </label>
+              </div>
           <div id="demo"></div>
 
         </div>
       </div>
     
 <script>
+        
+        var Refnon = firebase.database().ref("check/check");
+          Refnon.once("value",function(snapshot){
+            $('#notification').bootstrapToggle(snapshot.val());
+            non();
+          });
+          function non() {
+            $("#notification").on('change', function() {
+              if ($(this).is(':checked')) {
+                switchStatus = $(this).is(':checked');
+                // console.log(switchStatus);
+                Refnon.set('on');
+              }
+              else {
+                switchStatus = $(this).is(':checked');
+                // console.log(switchStatus);
+                Refnon.set('off');
+              }
+            });
+          }
+          
 
         var queryString = window.location.search;
         var urlParams = new URLSearchParams(queryString);
@@ -213,9 +242,9 @@
         }
 
         function openmodal() {
-          var Ref = firebase.database().ref("Alert_text_type/borad/web");
+          var Ref = firebase.database().ref("Alert_text_type/board/web");
           Ref.on("value",function(snapshot){
-            document.getElementById("borad/web").value = snapshot.val();
+            document.getElementById("board/web").value = snapshot.val();
           })
           Ref = firebase.database().ref("Alert_text_type/sensor/app");
           Ref.on("value",function(snapshot){
@@ -229,7 +258,7 @@
         }
         function edit_text(){
           var addRef = firebase.database().ref('Alert_text_type');
-                    addRef.child('borad/web').set(document.getElementById('borad/web').value);
+                    addRef.child('board/web').set(document.getElementById('board/web').value);
                     addRef.child('sensor/app').set(document.getElementById('sensor/app').value);
                     addRef.child('sensor/web').set(document.getElementById('sensor/web').value);
                     alert("Edit complete");$("#myModal").modal('hide');
