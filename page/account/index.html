@@ -171,7 +171,7 @@
         var scoresRef = firebase.database().ref(Sref);
         scoresRef.on("value", function (snapshot) {
             html = "<div class='container'><h1>Manage account</h1><a href=javascript:openmodal('add') class='aadd'>Add account</a>";
-            html += "<a href=javascript:openmodal('add') class='aadd'>Add account</a>"
+            // html += "<a href=javascript:openmodal('add') class='aadd'>Add account</a>"
             snapshot.forEach(function (data) {//name
                 // console.log(account);
                 html += "<div class='card'> <div class='card-body'><h2 class='card-title'>" + data.key +"</h2>";
